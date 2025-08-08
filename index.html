@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spam Email Classifier</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Spam Email Classifier</h1>
+
+  <textarea id="message" placeholder="Enter your email message here..."></textarea><br>
+  <button onclick="checkSpam()">Check Spam</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    async function checkSpam() {
+      const message = document.getElementById('message').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!message.trim()) {
+        resultDiv.textContent = "Please enter a message.";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+        resultDiv.textContent = `Result: ${data.result}`;
+      } catch (err) {
+        resultDiv.textContent = "Error contacting server.";
+        console.error(err);
+      }
+    }
+  </script>
+
+</body>
+</html>
